@@ -1,0 +1,68 @@
+:root {
+  --emerald: #10b981;
+  --dark: #111827;
+  --light: #f8fafc;
+  --gray: #64748b;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui, sans-serif; background: var(--light); color: #1f2937; line-height: 1.6; }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+
+/* HEADER */
+.header { background: white; box-shadow: 0 4px 20px rgba(0,0,0,.08); position: sticky; top: 0; z-index: 1000; }
+.header .container { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; }
+.logo { font-size: 28px; font-weight: 800; letter-spacing: -2px; }
+.logo span:first-child { color: var(--emerald); }
+.city { font-size: 11px; color: var(--gray); margin-left: 8px; }
+.nav { display: flex; gap: 32px; }
+.nav a { font-weight: 600; color: #334155; text-decoration: none; }
+.nav a:hover { color: var(--emerald); }
+.auth a { padding: 10px 24px; border-radius: 9999px; font-weight: 600; text-decoration: none; margin-left: 12px; }
+.btn-login { border: 2px solid var(--emerald); color: var(--emerald); }
+.btn-profile { background: var(--emerald); color: white; }
+.btn-logout { color: #ef4444; }
+.hamburger { display: none; font-size: 30px; background: none; border: none; cursor: pointer; }
+
+@media (max-width: 768px) {
+  .nav { position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px); background: white; flex-direction: column; padding: 40px 20px; gap: 25px; transition: left .4s; box-shadow: 0 10px 30px rgba(0,0,0,.1); }
+  .nav.open { left: 0; }
+  .hamburger { display: block; }
+}
+
+/* HERO */
+.hero {
+  height: 100vh; min-height: 650px;
+  background: linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65)), url('https://picsum.photos/id/1015/2000/1200') center/cover;
+  color: white; display: flex; align-items: center; text-align: center;
+}
+.hero h1 { font-size: clamp(3rem, 8vw, 6rem); font-weight: 900; line-height: 1.05; }
+
+/* MAIN SECTION */
+.main-section { padding: 100px 20px; background: white; }
+.main-section h2 { text-align: center; font-size: 2.8rem; margin-bottom: 60px; }
+
+/* CARDS */
+.card {
+  background: white; border-radius: 24px; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08); transition: .4s;
+}
+.card:hover { transform: translateY(-20px); box-shadow: 0 30px 60px rgba(0,0,0,.15); }
+.card .content { padding: 30px; }
+
+/* CHAT */
+.chat-window {
+  height: 460px; overflow-y: auto; padding: 25px;
+  background: #f1f5f9; border-radius: 24px; margin: 25px 0;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.chat-window .me { align-self: flex-end; background: var(--emerald); color: white; padding: 15px 22px; border-radius: 22px; border-bottom-right-radius: 6px; max-width: 75%; }
+.chat-window .them { align-self: flex-start; background: white; border: 1px solid #e2e8f0; padding: 15px 22px; border-radius: 22px; border-bottom-left-radius: 6px; max-width: 75%; }
+
+/* FOOTER */
+.footer { background: #0f172a; color: #cbd5e1; padding: 70px 20px 40px; text-align: center; }
+
+/* Дополнительные классы для страниц */
+.program-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; margin-top: 60px; }
+.contact-info { font-size: 1.3rem; margin-top: 40px; line-height: 2; }
+.login-box { max-width: 480px; margin: 100px auto; padding: 40px; background: white; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,.1); }
