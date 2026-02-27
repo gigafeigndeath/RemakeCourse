@@ -58,6 +58,7 @@ body { font-family: system-ui, sans-serif; background: var(--light); color: #1f2
 }
 .chat-window .me { align-self: flex-end; background: var(--emerald); color: white; padding: 15px 22px; border-radius: 22px; border-bottom-right-radius: 6px; max-width: 75%; }
 .chat-window .them { align-self: flex-start; background: white; border: 1px solid #e2e8f0; padding: 15px 22px; border-radius: 22px; border-bottom-left-radius: 6px; max-width: 75%; }
+.message { max-width: 75%; padding: 14px 20px; border-radius: 20px; }
 
 /* FOOTER */
 .footer { background: #0f172a; color: #cbd5e1; padding: 70px 20px 40px; text-align: center; }
@@ -66,3 +67,12 @@ body { font-family: system-ui, sans-serif; background: var(--light); color: #1f2
 .program-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; margin-top: 60px; }
 .contact-info { font-size: 1.3rem; margin-top: 40px; line-height: 2; }
 .login-box { max-width: 480px; margin: 100px auto; padding: 40px; background: white; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,.1); }
+
+/* Формы */
+.input { width: 100%; padding: 16px 20px; border: 1px solid #cbd5e1; border-radius: 9999px; font-size: 1.05rem; margin-bottom: 15px; }
+.btn { padding: 16px 40px; border-radius: 9999px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; }
+.btn-primary { background: var(--emerald); color: white; }
+.btn-primary:hover { background: #0f766e; }
+
+/* Ошибка */
+.error { background: #fee2e2; color: #b91c1c; padding: 15px; border-radius: 12px; text-align: center; margin: 20px auto; max-width: 480px; }

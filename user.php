@@ -1,29 +1,34 @@
-<?php include 'config.php'; 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'user') header('Location: login.php'); 
+<?php
+include 'config.php';
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
+    header('Location: login.php');
+    exit;
+}
 ?>
+
 <?php include 'includes/header.php'; ?>
 
-<div class="container" style="padding:60px 20px; max-width:900px;">
-    <h1>Личный кабинет</h1>
-    
-    <div style="margin-top:50px;">
-        <h2>Чат с наставником</h2>
+<div class="container user-page">
+    <div class="profile-header">
+        <h1 class="profile-title">Личный кабинет</h1>
+        <p class="welcome">Добро пожаловать, <?= htmlspecialchars($_SESSION['full_name'] ?? 'ученик') ?>!</p>
+    </div>
+
+    <!-- ЧАТ -->
+    <section class="chat-section">
+        <h2 class="chat-title">Чат с наставником</h2>
         <div id="chatWindow" class="chat-window"></div>
         
-        <div style="display:flex; gap:12px; margin-top:15px;">
-            <input id="msgInput" type="text" style="flex:1; padding:18px; border-radius:9999px; border:1px solid #e2e8f0;" placeholder="Напишите сообщение...">
-            <button onclick="sendMessage(document.getElementById('msgInput').value)" 
-                    style="background:var(--emerald); color:white; padding:0 40px; border-radius:9999px; border:none; cursor:pointer;">
-                Отправить
-            </button>
+        <div class="chat-input-container">
+            <input type="text" id="msgInput" class="chat-input" placeholder="Напишите сообщение...">
+            <button onclick="sendMessage(document.getElementById('msgInput').value)" class="btn btn-primary send-btn">Отправить</button>
         </div>
-    </div>
+    </section>
 </div>
 
-<!-- ←←← ЭТО САМОЕ ВАЖНОЕ ИСПРАВЛЕНИЕ -->
 <script>
-    myId = <?= json_encode($_SESSION['user_id'] ?? 0) ?>;   // ← передаём в JS
-    currentReceiver = 1;
+    let myId = <?= json_encode($_SESSION['user_id'] ?? 0) ?>;
+    let currentReceiver = 1;
 </script>
 <script src="assets/js/chat.js"></script>
 <script>
