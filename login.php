@@ -1,33 +1,33 @@
 <?php
-include 'config.php';
+session_start();
+require_once 'config.php';
 
 $error = '';
-$success = '';
-if (isset($_POST['action']) && $_POST['action'] === 'login') {
-    echo "<pre>Введён пароль: " . htmlspecialchars($_POST['password']) . "</pre>";
-    // ... остальной код
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    // ====================== ВХОД ======================
     if (isset($_POST['action']) && $_POST['action'] === 'login') {
         $email = trim($_POST['email']);
         $pass  = $_POST['password'];
 
-        $stmt = $pdo->prepare("SELECT id, password, role FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id, full_name, password, role FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($pass, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_id']   = $user['id'];
             $_SESSION['full_name'] = $user['full_name'];
-            $_SESSION['role']    = $user['role'];
+            $_SESSION['role']      = $user['role'];
+
             header('Location: ' . ($user['role'] === 'admin' ? 'admin.php' : 'user.php'));
             exit;
         } else {
             $error = 'Неверный email или пароль';
         }
-    } 
+    }
+
+    // ====================== РЕГИСТРАЦИЯ ======================
     elseif (isset($_POST['action']) && $_POST['action'] === 'register') {
         $full_name = trim($_POST['full_name']);
         $email     = trim($_POST['email']);
@@ -40,13 +40,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Этот email уже зарегистрирован';
         } else {
             $hash = password_hash($password, PASSWORD_BCRYPT);
-            $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, class, role) VALUES (?, ?, ?, ?, 'user')");
+
+            $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, class, role) 
+                                   VALUES (?, ?, ?, ?, 'user')");
             $stmt->execute([$full_name, $email, $hash, $class]);
-            
+
             $newId = $pdo->lastInsertId();
-            $_SESSION['user_id'] = $newId;
-            $_SESSION['full_name'] = $user['full_name'];
-            $_SESSION['role']    = 'user';
+
+            $_SESSION['user_id']   = $newId;
+            $_SESSION['full_name'] = $full_name;
+            $_SESSION['role']      = 'user';
+
             header('Location: user.php');
             exit;
         }

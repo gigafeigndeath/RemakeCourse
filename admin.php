@@ -7,14 +7,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 ?>
 <?php include 'includes/header.php'; ?>
 
-<div class="container" style="padding: 60px 20px; max-width: 1400px;">
+<div class="container" style="padding:60px 20px; max-width:1400px;">
     <div class="profile-header">
         <h1>Админ-панель • Преподаватель</h1>
         <p>Добро пожаловать, <?= htmlspecialchars($_SESSION['full_name'] ?? 'Преподаватель') ?>!</p>
     </div>
 
     <div class="admin-layout" style="display: grid; grid-template-columns: 280px 1fr; gap: 30px; margin-top: 30px;">
-        
         <!-- Список учеников -->
         <div class="students-sidebar">
             <h3>Ученики</h3>
@@ -35,10 +34,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         </div>
     </div>
 
-    <!-- ТАБЛИЦА ВСЕХ ПОЛЬЗОВАТЕЛЕЙ -->
+    <!-- Таблица пользователей -->
     <div style="margin-top:60px;">
-        <h2>Таблица пользователей</h2>
-        <table id="usersTable" style="width:100%; border-collapse:collapse; background:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+        <h2>Таблица всех пользователей</h2>
+        <table id="usersTable" style="width:100%; border-collapse:collapse; background:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.1); margin-top:20px;">
             <thead>
                 <tr style="background:#f1f5f9;">
                     <th style="padding:12px; text-align:left;">Имя</th>
@@ -53,15 +52,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 </div>
 
 <script>
-    let myId = <?= json_encode($_SESSION['user_id']) ?>;
-    let currentReceiver = null;
-    let currentStudentName = '';
+    // Устанавливаем только myId (currentReceiver уже есть в chat.js)
+    myId = <?= json_encode($_SESSION['user_id']) ?>;
 </script>
 
 <script src="assets/js/chat.js"></script>
 
 <script>
-    // Загрузка учеников
     function loadStudents() {
         fetch('api/get_students.php')
             .then(r => r.json())
@@ -72,20 +69,16 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
                     const div = document.createElement('div');
                     div.style.cssText = 'padding:12px 15px; margin:4px 0; border-radius:8px; cursor:pointer; background:#f8fafc;';
                     div.innerHTML = `<strong>${student.full_name}</strong><br><small>Класс: ${student.class || '—'}</small>`;
-                    div.onclick = () => switchStudent(student.id, student.full_name);
+                    div.onclick = () => {
+                        currentReceiver = student.id;
+                        document.getElementById('chatTitle').textContent = `Чат с ${student.full_name}`;
+                        loadHistory();
+                    };
                     container.appendChild(div);
                 });
             });
     }
 
-    window.switchStudent = function(id, name) {
-        currentReceiver = id;
-        currentStudentName = name;
-        document.getElementById('chatTitle').textContent = `Чат с ${name}`;
-        loadHistory(id);
-    };
-
-    // Загрузка таблицы пользователей
     function loadUsersTable() {
         fetch('api/get_all_users.php')
             .then(r => r.json())
@@ -112,16 +105,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             fetch('api/delete_user.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({id: id})
+                body: JSON.stringify({id})
             }).then(() => loadUsersTable());
         }
     };
 
-    // Инициализация
-    loadStudents();
-    loadUsersTable();
-    loadHistory(1); // начальный чат (можно изменить)
-    initWebSocket();
+    // Запуск всего после загрузки страницы
+    window.onload = function() {
+        loadStudents();
+        loadUsersTable();
+        loadHistory(1);        // начальный чат с первым учеником
+        initWebSocket();
+    };
 </script>
 
 <?php include 'includes/footer.php'; ?>
