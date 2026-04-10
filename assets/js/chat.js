@@ -1,67 +1,53 @@
-// assets/js/chat.js — обновлённая версия для админа + пользователя
 let socket;
 let currentReceiver = 1;
 let myId = 0;
 
-function loadHistory(receiver) {
-    fetch(`api/get_messages.php?receiver=${receiver}`)
+window.loadHistory = function(receiver = null) {
+    if (receiver !== null) currentReceiver = receiver;
+
+    fetch(`api/get_messages.php?receiver=${currentReceiver}`)
         .then(r => r.json())
         .then(msgs => {
             const win = document.getElementById('chatWindow');
+            if (!win) return;
             win.innerHTML = '';
             msgs.forEach(m => {
-                const side = m.sender_id == myId ? 'me' : 'them';
-                let html = `
-                    <div class="message ${side}">
-                        <div class="message-time">${m.time}</div>
-                        <div class="message-text">${m.message}</div>
-                `;
-                // Кнопка удаления только для админа
-                if (document.querySelector('.admin-page')) {
-                    html += `<button onclick="deleteMessage(${m.id})" class="delete-btn">✕</button>`;
-                }
-                html += `</div>`;
-                win.innerHTML += html;
+                const isMe = parseInt(m.sender_id) === parseInt(myId);
+                win.innerHTML += `
+                    <div style="margin:12px 0; text-align:${isMe ? 'right' : 'left'};">
+                        <div style="display:inline-block; max-width:75%; padding:12px 18px; border-radius:18px;
+                                    background:${isMe ? '#22c55e' : '#e5e7eb'}; color:${isMe ? 'white' : 'black'};">
+                            <small style="opacity:0.75;">${m.time}</small><br>
+                            ${m.message}
+                        </div>
+                    </div>`;
             });
             win.scrollTop = win.scrollHeight;
         });
-}
+};
 
-function initWebSocket() {
-    socket = new WebSocket('ws://localhost:8080');
-    socket.onmessage = e => {
-        const d = JSON.parse(e.data);
-        if (d.to == myId || d.from == myId) {
-            const win = document.getElementById('chatWindow');
-            const side = d.from == myId ? 'me' : 'them';
-            win.innerHTML += `
-                <div class="message ${side}">
-                    <div class="message-time">${d.time}</div>
-                    <div class="message-text">${d.text}</div>
-                </div>`;
-            win.scrollTop = win.scrollHeight;
-        }
-    };
-}
+window.sendMessage = function() {
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if (!text || !socket) return;
 
-window.sendMessage = function(text) {
-    if (!text.trim() || !socket) return;
     socket.send(JSON.stringify({
         sender_id: myId,
         receiver_id: currentReceiver,
-        message: text.trim()
+        message: text
     }));
-    document.getElementById('msgInput').value = '';
+
+    input.value = '';
+    loadHistory(); // сразу обновляем чат
 };
 
-// === НОВАЯ ФУНКЦИЯ ДЛЯ АДМИНА ===
-window.deleteMessage = function(messageId) {
-    if (!confirm('Удалить это сообщение?')) return;
-    
-    fetch('api/delete_message.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: messageId })
-    })
-    .then(() => loadHistory(currentReceiver)); // перезагружаем чат
+window.initWebSocket = function() {
+    if (socket) socket.close();
+    socket = new WebSocket('ws://localhost:8080');
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        if (data.receiver_id == myId || data.sender_id == myId) {
+            loadHistory();
+        }
+    };
 };

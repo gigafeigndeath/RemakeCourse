@@ -5,81 +5,122 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 ?>
-
 <?php include 'includes/header.php'; ?>
 
-<div class="container admin-page">
+<div class="container" style="padding: 60px 20px; max-width: 1400px;">
     <div class="profile-header">
-        <h1 class="profile-title">Админ-панель • Преподаватель</h1>
-        <p class="welcome">Добро пожаловать, <?= htmlspecialchars($_SESSION['full_name'] ?? 'Преподаватель') ?>!</p>
+        <h1>Админ-панель • Преподаватель</h1>
+        <p>Добро пожаловать, <?= htmlspecialchars($_SESSION['full_name'] ?? 'Преподаватель') ?>!</p>
     </div>
 
-    <div class="admin-layout">
+    <div class="admin-layout" style="display: grid; grid-template-columns: 280px 1fr; gap: 30px; margin-top: 30px;">
+        
         <!-- Список учеников -->
         <div class="students-sidebar">
-            <h3 class="sidebar-title">Ученики</h3>
-            <div id="studentsList" class="students-list"></div>
+            <h3>Ученики</h3>
+            <div id="studentsList" style="background:#fff; border-radius:12px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); max-height:70vh; overflow-y:auto;"></div>
         </div>
 
         <!-- Чат -->
         <div class="chat-section">
-            <div class="chat-header">
-                <h2 id="chatWith" class="chat-title">Чат с учеником</h2>
-                <span id="currentStudentName" class="current-student"></span>
-            </div>
-            <div id="chatWindow" class="chat-window"></div>
+            <h2 id="chatTitle" style="margin-bottom:15px;">Чат с учеником</h2>
+            <div id="chatWindow" style="background:#f8f9fa; border-radius:12px; height:520px; padding:20px; overflow-y:auto; margin-bottom:15px; box-shadow:0 4px 12px rgba(0,0,0,0.1);"></div>
             
-            <div class="chat-input-container">
-                <input type="text" id="msgInput" class="chat-input" placeholder="Напишите сообщение...">
-                <button onclick="sendMessage(document.getElementById('msgInput').value)" class="btn btn-primary send-btn">Отправить</button>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="msgInput" placeholder="Напишите сообщение..." 
+                       style="flex:1; padding:15px; border-radius:50px; border:1px solid #ddd; font-size:16px;">
+                <button onclick="sendMessage()" 
+                        style="background:#22c55e; color:white; border:none; padding:0 30px; border-radius:50px; cursor:pointer;">Отправить</button>
             </div>
         </div>
+    </div>
+
+    <!-- ТАБЛИЦА ВСЕХ ПОЛЬЗОВАТЕЛЕЙ -->
+    <div style="margin-top:60px;">
+        <h2>Таблица пользователей</h2>
+        <table id="usersTable" style="width:100%; border-collapse:collapse; background:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+            <thead>
+                <tr style="background:#f1f5f9;">
+                    <th style="padding:12px; text-align:left;">Имя</th>
+                    <th style="padding:12px; text-align:left;">Класс</th>
+                    <th style="padding:12px; text-align:left;">Роль</th>
+                    <th style="padding:12px; text-align:center;">Действия</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    let myId = <?= json_encode($_SESSION['user_id'] ?? 0) ?>;
-    let currentReceiver = 1;        // будет перезаписываться при выборе ученика
+    let myId = <?= json_encode($_SESSION['user_id']) ?>;
+    let currentReceiver = null;
     let currentStudentName = '';
 </script>
 
 <script src="assets/js/chat.js"></script>
 
 <script>
-    // Загружаем список всех учеников
+    // Загрузка учеников
     function loadStudents() {
         fetch('api/get_students.php')
             .then(r => r.json())
-            .then(students => {
+            .then(data => {
                 const container = document.getElementById('studentsList');
                 container.innerHTML = '';
-                students.forEach(student => {
+                data.forEach(student => {
                     const div = document.createElement('div');
-                    div.className = 'student-item';
-                    div.innerHTML = `
-                        <strong>${student.full_name}</strong><br>
-                        <small>Класс: ${student.class || '—'}</small>
-                    `;
-                    div.onclick = () => switchToStudent(student.id, student.full_name);
+                    div.style.cssText = 'padding:12px 15px; margin:4px 0; border-radius:8px; cursor:pointer; background:#f8fafc;';
+                    div.innerHTML = `<strong>${student.full_name}</strong><br><small>Класс: ${student.class || '—'}</small>`;
+                    div.onclick = () => switchStudent(student.id, student.full_name);
                     container.appendChild(div);
                 });
             });
     }
 
-    // Переключение на ученика
-    window.switchToStudent = function(studentId, name) {
-        currentReceiver = studentId;
+    window.switchStudent = function(id, name) {
+        currentReceiver = id;
         currentStudentName = name;
-        
-        document.getElementById('chatWith').textContent = 'Чат с учеником';
-        document.getElementById('currentStudentName').textContent = name;
-        
-        loadHistory(studentId);
+        document.getElementById('chatTitle').textContent = `Чат с ${name}`;
+        loadHistory(id);
     };
 
-    // Запуск
+    // Загрузка таблицы пользователей
+    function loadUsersTable() {
+        fetch('api/get_all_users.php')
+            .then(r => r.json())
+            .then(users => {
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '';
+                users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="padding:12px;">${u.full_name}</td>
+                        <td style="padding:12px;">${u.class || '—'}</td>
+                        <td style="padding:12px;">${u.role}</td>
+                        <td style="padding:12px; text-align:center;">
+                            <button onclick="deleteUser(${u.id})" style="background:#ef4444;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">Удалить</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+    }
+
+    window.deleteUser = function(id) {
+        if (confirm('Удалить пользователя?')) {
+            fetch('api/delete_user.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id})
+            }).then(() => loadUsersTable());
+        }
+    };
+
+    // Инициализация
     loadStudents();
-    loadHistory(1);           // начальный чат (можно с первым учеником)
+    loadUsersTable();
+    loadHistory(1); // начальный чат (можно изменить)
     initWebSocket();
 </script>
 

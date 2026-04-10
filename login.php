@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($pass, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
+            $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['role']    = $user['role'];
             header('Location: ' . ($user['role'] === 'admin' ? 'admin.php' : 'user.php'));
             exit;
@@ -44,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $newId = $pdo->lastInsertId();
             $_SESSION['user_id'] = $newId;
+            $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['role']    = 'user';
             header('Location: user.php');
             exit;
