@@ -77,32 +77,40 @@
 
 
 <!-- ====================== СОЦСЕТИ И ПАРТНЁРЫ ====================== -->
-<section class="partners-section">
-    <div class="container">
-        <h2 class="section-title">Мы в соцсетях и партнёры</h2>
-        
-        <div class="partners-grid">
-            <!-- Соцсети -->
-            <a href="https://t.me/itcube25" class="partner-item" target="_blank">
-                <img src="assets/images/telegram.png" alt="Telegram" class="partner-img">
-            </a>
-            <a href="https://vk.com/itcubenhk" class="partner-item" target="_blank">
-                <img src="assets/images/vk.png" alt="VK" class="partner-img">
-            </a>
+<h2 class="section-title">Мы в соцсетях и партнёры</h2>
 
-            <!-- Партнёры -->
-            <div class="partner-item">
-                <img src="assets/images/organizaciya.png" alt="Точка Роста" class="partner-img">
-            </div>
-            <div class="partner-item">
-                <img src="assets/images/hakaton.png" alt="Хакатон" class="partner-img">
-            </div>
-            <div class="partner-item">
-                <img src="assets/images/profile.png" alt="Профиль" class="partner-img">
-            </div>
-        </div>
+<div class="social-partners-section">
+  <!-- Соцсети -->
+  <div class="social-networks">
+    <h3 class="block-title">Мы в соцсетях</h3>
+    <div class="social-links">
+      <a href="https://vk.com/itcubenhk" target="_blank" class="social-item">
+        <div class="social-icon">VK</div>
+        <span class="social-name">ВКонтакте</span>
+      </a>
+      <!-- Добавляй другие соцсети сюда -->
     </div>
-</section>
+  </div>
+
+  <!-- Партнёры -->
+  <div class="partners-block">
+    <h3 class="block-title">Наши партнёры</h3>
+    <div class="partners-grid">
+      <div class="partner-item">
+        <img src="assets/partners/federal.png" alt="Федеральный проект" class="partner-logo">
+        <span class="partner-name">Федеральный проект</span>
+      </div>
+      <div class="partner-item">
+        <img src="assets/partners/minpros.png" alt="Минпросвещения" class="partner-logo">
+        <span class="partner-name">Минпросвещения РФ</span>
+      </div>
+      <div class="partner-item">
+        <img src="assets/partners/nakhodka.png" alt="Администрация Находки" class="partner-logo">
+        <span class="partner-name">Администрация г. Находка</span>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 // Данные направлений
 const directions = {
