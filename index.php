@@ -88,7 +88,6 @@
         <div class="social-icon">VK</div>
         <span class="social-name">ВКонтакте</span>
       </a>
-      <!-- Добавляй другие соцсети сюда -->
     </div>
   </div>
 
@@ -97,15 +96,15 @@
     <h3 class="block-title">Наши партнёры</h3>
     <div class="partners-grid">
       <div class="partner-item">
-        <img src="assets/partners/federal.png" alt="Федеральный проект" class="partner-logo">
+        <img src="./assets/images/federal.png" alt="Федеральный проект" class="partner-logo">
         <span class="partner-name">Федеральный проект</span>
       </div>
       <div class="partner-item">
-        <img src="assets/partners/minpros.png" alt="Минпросвещения" class="partner-logo">
+        <img src="./assets/images/minpros.png" alt="Минпросвещения" class="partner-logo">
         <span class="partner-name">Минпросвещения РФ</span>
       </div>
       <div class="partner-item">
-        <img src="assets/partners/nakhodka.png" alt="Администрация Находки" class="partner-logo">
+        <img src="./assets/images/nakhodka.svg" alt="Администрация Находки" class="partner-logo">
         <span class="partner-name">Администрация г. Находка</span>
       </div>
     </div>
