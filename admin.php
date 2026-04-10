@@ -79,26 +79,34 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             });
     }
 
-    function loadUsersTable() {
-        fetch('api/get_all_users.php')
-            .then(r => r.json())
-            .then(users => {
-                const tbody = document.getElementById('usersTableBody');
-                tbody.innerHTML = '';
-                users.forEach(u => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="padding:12px;">${u.full_name}</td>
-                        <td style="padding:12px;">${u.class || '—'}</td>
-                        <td style="padding:12px;">${u.role}</td>
-                        <td style="padding:12px; text-align:center;">
-                            <button onclick="deleteUser(${u.id})" style="background:#ef4444;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">Удалить</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+function loadUsersTable() {
+    fetch('api/get_all_users.php')
+        .then(r => r.json())
+        .then(users => {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                const tr = document.createElement('tr');
+                
+                let actions = '';
+                if (u.role !== 'admin') {
+                    actions = `<button onclick="deleteUser(${u.id})" style="background:#ef4444;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">Удалить</button>`;
+                } else {
+                    actions = `<span style="color:#64748b; font-size:0.9em; font-weight:500;">Администратор</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td style="padding:12px;">${u.full_name}</td>
+                    <td style="padding:12px;">${u.class || '—'}</td>
+                    <td style="padding:12px;">${u.role}</td>
+                    <td style="padding:12px; text-align:center;">
+                        ${actions}
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
-    }
+        });
+}
 
     window.deleteUser = function(id) {
         if (confirm('Удалить пользователя?')) {

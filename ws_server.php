@@ -9,9 +9,6 @@ use Ratchet\Server\IoServer;
 
 require_once 'config.php';
 
-// Делаем $pdo глобальным, чтобы он был виден внутри класса
-global $pdo;
-
 class Chat implements MessageComponentInterface {
     protected $clients;
 
@@ -20,13 +17,28 @@ class Chat implements MessageComponentInterface {
         echo "✅ WebSocket сервер запущен на ws://127.0.0.1:8081\n";
     }
 
+    // Функция пересоздания соединения с БД
+    private function getPdo() {
+        global $pdo;
+        try {
+            // Проверяем, живо ли соединение
+            $pdo->query('SELECT 1');
+        } catch (\Exception $e) {
+            // Если умерло — пересоздаём
+            require_once 'config.php'; // переподключаемся
+            global $pdo;
+            echo "🔄 PDO пересоздано\n";
+        }
+        return $pdo;
+    }
+
     public function onOpen(ConnectionInterface $conn) {
         $this->clients->attach($conn);
         echo "Новый клиент подключился ({$conn->resourceId})\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
-        global $pdo;   // ← ЭТО ИСПРАВЛЕНИЕ
+        $pdo = $this->getPdo();   // ← используем свежее соединение
 
         $data = json_decode($msg, true);
         if (!isset($data['sender_id'], $data['receiver_id'], $data['message'])) {
@@ -38,7 +50,6 @@ class Chat implements MessageComponentInterface {
         $receiver_id  = (int)$data['receiver_id'];
         $message_text = trim($data['message']);
 
-        // Сохраняем в базу
         try {
             $stmt = $pdo->prepare("INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)");
             $stmt->execute([$sender_id, $receiver_id, $message_text]);
@@ -47,7 +58,7 @@ class Chat implements MessageComponentInterface {
             echo "❌ Ошибка записи в БД: " . $e->getMessage() . "\n";
         }
 
-        // Рассылаем всем клиентам
+        // Рассылаем всем
         $payload = json_encode([
             'sender_id'   => $sender_id,
             'receiver_id' => $receiver_id,
