@@ -591,3 +591,23 @@ body { font-family: system-ui, sans-serif; background: var(--light); color: #1f2
   .footer-heading { font-weight: 600; margin-bottom: 1rem; }
   .footer-links a, .footer-social-link { color: #9ca3af; transition: color 0.2s; }
   .footer-links a:hover, .footer-social-link:hover { color: white; }
+  
+.contact-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+@media (min-width: 1024px) { .contact-container { grid-template-columns: 1fr 1fr; } }
+
+.info-card, .contact-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+.block-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem; }
+.contact-item { margin-bottom: 1rem; }
+.yandex-map { width: 100%; height: 520px; border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
+.map-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
