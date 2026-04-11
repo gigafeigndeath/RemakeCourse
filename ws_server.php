@@ -14,7 +14,7 @@ class Chat implements MessageComponentInterface {
 
     public function __construct() {
         $this->clients = new \SplObjectStorage;
-        echo "✅ WebSocket сервер запущен на ws://127.0.0.1:8081\n";
+        echo "✅ WebSocket сервер запущен на ws://127.0.0.1:9002\n";
     }
 
     // Функция пересоздания соединения с БД
@@ -84,8 +84,8 @@ class Chat implements MessageComponentInterface {
 
 $server = IoServer::factory(
     new HttpServer(new WsServer(new Chat())),
-    8081
+    9002
 );
 
-echo "🚀 WebSocket сервер запущен и готов к работе на порту 8081!\n";
+echo "🚀 WebSocket сервер запущен и готов к работе на порту 9002!\n";
 $server->run();

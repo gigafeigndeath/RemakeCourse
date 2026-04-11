@@ -1254,6 +1254,6 @@
             "install-path": "../symfony/routing"
         }
     ],
-    "dev": true,
+    "dev": false,
     "dev-package-names": []
 }

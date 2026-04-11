@@ -45,7 +45,13 @@ window.sendMessage = function() {
 
 window.initWebSocket = function() {
     if (socket) socket.close();
-    socket = new WebSocket('ws://127.0.0.1:8081');
+    socket = new WebSocket('ws://itcubechat.ru/ws');
+    socket.onerror = function(e) {
+    console.error('WebSocket error:', e);
+};
+socket.onclose = function(e) {
+    console.error('WebSocket closed:', e);
+};
     socket.onmessage = function(e) {
         loadHistory();
     };

@@ -1,0 +1,22 @@
+nohup: ignoring input
+✅ WebSocket сервер запущен на ws://127.0.0.1:9001
+PHP Fatal error:  Uncaught RuntimeException: Failed to listen on "tcp://0.0.0.0:9001": Address already in use (EADDRINUSE) in /var/www/itcubechat.ru/vendor/react/socket/src/TcpServer.php:188
+Stack trace:
+#0 /var/www/itcubechat.ru/vendor/react/socket/src/Server.php(81): React\Socket\TcpServer->__construct()
+#1 /var/www/itcubechat.ru/vendor/cboden/ratchet/src/Ratchet/Server/IoServer.php(59): React\Socket\Server->__construct()
+#2 /var/www/itcubechat.ru/ws_server.php(87): Ratchet\Server\IoServer::factory()
+#3 {main}
+  thrown in /var/www/itcubechat.ru/vendor/react/socket/src/TcpServer.php on line 188
+✅ WebSocket сервер запущен на ws://127.0.0.1:9001
+🚀 WebSocket сервер запущен и готов к работе на порту 9001!
+✅ WebSocket сервер запущен на ws://127.0.0.1:9001
+🚀 WebSocket сервер запущен и готов к работе на порту 9001!
+✅ WebSocket сервер запущен на ws://127.0.0.1:9002
+🚀 WebSocket сервер запущен и готов к работе на порту 9002!
+✅ WebSocket сервер запущен на ws://127.0.0.1:9002
+🚀 WebSocket сервер запущен и готов к работе на порту 9002!
+Новый клиент подключился (52)
+✅ Сообщение сохранено в БД (от 2 → 1)
+Клиент отключился (52)
+Новый клиент подключился (85)
+Клиент отключился (85)

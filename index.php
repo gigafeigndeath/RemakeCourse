@@ -1,4 +1,9 @@
-<?php include 'includes/header.php'; ?>
+<?php
+ ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ include 'includes/header.php'; 
+?>
 
 <!-- HERO -->
 <section class="hero">
@@ -96,15 +101,12 @@
     <h3 class="block-title">Наши партнёры</h3>
     <div class="partners-grid">
       <div class="partner-item">
-        <img src="./assets/images/federal.png" alt="Федеральный проект" class="partner-logo">
         <span class="partner-name">Федеральный проект</span>
       </div>
       <div class="partner-item">
-        <img src="./assets/images/minpros.png" alt="Минпросвещения" class="partner-logo">
         <span class="partner-name">Минпросвещения РФ</span>
       </div>
       <div class="partner-item">
-        <img src="./assets/images/nakhodka.svg" alt="Администрация Находки" class="partner-logo">
         <span class="partner-name">Администрация г. Находка</span>
       </div>
     </div>
