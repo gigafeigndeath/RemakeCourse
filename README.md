@@ -32,6 +32,7 @@
 ---
 
 ## 📁 Структура проекта
+
 itcubechat.ru/
 ├── assets/              # Стили, скрипты, изображения
 ├── api/                 # API-эндпоинты (get_students, toggle_role и др.)
