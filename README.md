@@ -34,19 +34,27 @@
 ## 📁 Структура проекта
 
 itcubechat.ru/
-├── assets/              # Стили, скрипты, изображения
-├── api/                 # API-эндпоинты (get_students, toggle_role и др.)
-├── includes/            # Шапка и футер
-├── vendor/              # Composer (Ratchet)
-├── admin.php            # Админ-панель преподавателя
-├── user.php             # Личный кабинет ученика с чатом
-├── login.php            # Вход и регистрация
-├── ws_server.php        # WebSocket-сервер
-├── config.php           # Конфигурация базы данных
+├── assets/                  # Стили, скрипты, изображения
+│   ├── css/
+│   ├── js/
+│   └── images/
+├── api/                     # API-эндпоинты
+│   ├── get_students.php
+│   ├── get_all_users.php
+│   ├── toggle_role.php
+│   ├── delete_user.php
+│   └── ...
+├── includes/                # Шапка и футер
+├── vendor/                  # Composer (Ratchet + зависимости)
+├── admin.php                # Админ-панель преподавателя
+├── user.php                 # Личный кабинет ученика с чатом
+├── login.php                # Вход и регистрация
+├── ws_server.php            # WebSocket-сервер (Ratchet)
+├── config.php               # Конфигурация БД + PDO
+├── index.php
 ├── sitemap.xml
 ├── robots.txt
-└── setup.sql            # Структура базы данных
-
+└── setup.sql                # Структура базы данных
 ---
 
 ## 🚀 Как запустить проект
