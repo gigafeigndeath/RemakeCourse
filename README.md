@@ -33,6 +33,7 @@
 
 ## 📁 Структура проекта
 
+```bash
 itcubechat.ru/
 ├── assets/                  # Стили, скрипты, изображения
 │   ├── css/
@@ -49,12 +50,13 @@ itcubechat.ru/
 ├── admin.php                # Админ-панель преподавателя
 ├── user.php                 # Личный кабинет ученика с чатом
 ├── login.php                # Вход и регистрация
-├── ws_server.php            # WebSocket-сервер (Ratchet)
+├── ws_server.php            # WebSocket-сервер
 ├── config.php               # Конфигурация БД + PDO
 ├── index.php
 ├── sitemap.xml
 ├── robots.txt
 └── setup.sql                # Структура базы данных
+```
 ---
 
 ## 🚀 Как запустить проект
