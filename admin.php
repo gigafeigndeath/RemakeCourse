@@ -41,8 +41,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
             <thead>
                 <tr style="background:#f1f5f9;">
                     <th style="padding:12px; text-align:left;">Имя</th>
-                    <th style="padding:12px; text-align:left;">Класс</th>
+		    <th style="padding:12px; text-align:left;">Email</th>
                     <th style="padding:12px; text-align:left;">Роль</th>
+                    <th style="padding:12px; text-align:left;">Класс</th>
                     <th style="padding:12px; text-align:center;">Действия</th>
                 </tr>
             </thead>
@@ -54,6 +55,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 <script>
     // Устанавливаем только myId (currentReceiver уже есть в chat.js)
     myId = <?= json_encode($_SESSION['user_id']) ?>;
+    let currentUserId = <?= $_SESSION['user_id'] ?? 0 ?>;
 </script>
 
 <script src="assets/js/chat.js"></script>
@@ -85,29 +87,41 @@ function loadUsersTable() {
         .then(users => {
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
+
             users.forEach(u => {
                 const tr = document.createElement('tr');
                 
                 let actions = '';
-                if (u.role !== 'admin') {
-                    actions = `<button onclick="deleteUser(${u.id})" style="background:#ef4444;color:white;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;">Удалить</button>`;
-                } else {
-                    actions = `<span style="color:#64748b; font-size:0.9em; font-weight:500;">Администратор</span>`;
+
+                if (currentUserId === 1 && u.id !== 1) {
+                    // Кнопка смены роли
+                    const btnText = u.role === 'admin' ? 'Забрать роль' : 'Сделать админом';
+                    const newRole = u.role === 'admin' ? 'user' : 'admin';
+
+                    actions = `
+                        <button onclick="toggleRole(${u.id}, '${newRole}')" 
+                                style="padding:6px 12px; margin-right:8px; font-size:13px; border-radius:6px; cursor:pointer; background:#22c55e; color:white;">
+                            ${btnText}
+                        </button>
+                        <button onclick="deleteUser(${u.id})" 
+                                style="padding:6px 12px; font-size:13px; border-radius:6px; cursor:pointer; background:#ef4444; color:white;">
+                            Удалить
+                        </button>
+                    `;
                 }
 
                 tr.innerHTML = `
                     <td style="padding:12px;">${u.full_name}</td>
-                    <td style="padding:12px;">${u.class || '—'}</td>
+                    <td style="padding:12px;">${u.email || '-'}</td>
                     <td style="padding:12px;">${u.role}</td>
-                    <td style="padding:12px; text-align:center;">
-                        ${actions}
-                    </td>
+                    <td style="padding:12px;">${u.class || '-'}</td>
+                    <td style="padding:12px; text-align:center;">${actions}</td>
                 `;
+
                 tbody.appendChild(tr);
             });
         });
 }
-
     window.deleteUser = function(id) {
         if (confirm('Удалить пользователя?')) {
             fetch('api/delete_user.php', {
@@ -126,5 +140,25 @@ function loadUsersTable() {
         initWebSocket();
     };
 </script>
+<script>
+function toggleRole(userId, currentRole) {
+    if (!confirm('Изменить роль пользователя?')) return;
 
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+
+    fetch('api/toggle_role.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, role: newRole })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            loadUsersTable(); // перезагружаем таблицу
+        } else {
+            alert(data.error || 'Ошибка');
+        }
+    });
+}
+</script>
 <?php include 'includes/footer.php'; ?>

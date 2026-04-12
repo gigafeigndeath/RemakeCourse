@@ -1,5 +1,11 @@
 <?php
 include '../config.php';
 header('Content-Type: application/json');
-$stmt = $pdo->query("SELECT id, full_name, class, role FROM users ORDER BY role, full_name");
-echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+
+$users = [];
+$stmt = $pdo->query("SELECT id, full_name, email, role, class FROM users ORDER BY id");
+while ($row = $stmt->fetch()) {
+    $users[] = $row;
+}
+
+echo json_encode($users);
