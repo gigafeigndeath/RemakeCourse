@@ -684,3 +684,80 @@ body { font-family: system-ui, sans-serif; background: var(--light); color: #1f2
     background: #cbd5e1;
     border-radius: 20px;
 }
+/* =============================================
+   АДАПТИВ ДЛЯ СТРАНИЦ "О НАС" И "КОНТАКТЫ"
+   ============================================= */
+
+.max-w-7xl {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+@media (max-width: 640px) {
+    .max-w-7xl {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* Яндекс Карта */
+.yandex-map {
+    width: 100% !important;
+    height: 420px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+@media (max-width: 768px) {
+    .yandex-map {
+        height: 320px;           /* меньше высота на мобильных */
+        border-radius: 12px;
+    }
+}
+
+/* Контейнеры на страницах О нас и Контакты */
+.contact-container,
+.about-content {
+    width: 100%;
+}
+
+.contact-info,
+.contact-map {
+    width: 100%;
+}
+
+/* Текст на мобильных */
+.prose {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+    .prose {
+        font-size: 1rem;
+    }
+    
+    h1.section-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* Общие улучшения для всех страниц */
+.container {
+    box-sizing: border-box;
+}
+
+table {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+/* Если таблица пользователей на мобильных съезжает */
+.users-table {
+    min-width: 100%;
+}
