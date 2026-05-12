@@ -1,4 +1,7 @@
 <?php
+// === ВАЖНО: таймзона сразу в самом начале ===
+date_default_timezone_set('Asia/Vladivostok');
+
 require __DIR__ . '/vendor/autoload.php';
 
 use Ratchet\ConnectionInterface;
@@ -14,21 +17,27 @@ class Chat implements MessageComponentInterface {
 
     public function __construct() {
         $this->clients = new \SplObjectStorage;
-        echo "✅ WebSocket сервер запущен на ws://127.0.0.1:9002\n";
+        echo "✅ WebSocket сервер запущен на ws://127.0.0.1:9002 (Asia/Vladivostok)\n";
     }
 
-    // Функция пересоздания соединения с БД
     private function getPdo() {
         global $pdo;
-        try {
-            // Проверяем, живо ли соединение
-            $pdo->query('SELECT 1');
-        } catch (\Exception $e) {
-            // Если умерло — пересоздаём
-            require_once 'config.php'; // переподключаемся
-            global $pdo;
-            echo "🔄 PDO пересоздано\n";
+        $attempts = 0;
+        $maxAttempts = 5;
+
+        while ($attempts < $maxAttempts) {
+            try {
+                $pdo->query('SELECT 1');
+                return $pdo;
+            } catch (\Exception $e) {
+                $attempts++;
+                echo "🔄 Переподключение к MySQL (попытка $attempts)\n";
+                require_once 'config.php';
+                global $pdo;
+                usleep(300000);
+            }
         }
+        echo "❌ Не удалось восстановить MySQL\n";
         return $pdo;
     }
 
@@ -38,32 +47,36 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
-        $pdo = $this->getPdo();   // ← используем свежее соединение
-
-        $data = json_decode($msg, true);
-        if (!isset($data['sender_id'], $data['receiver_id'], $data['message'])) {
-            echo "❌ Некорректное сообщение\n";
+        if ($msg === 'ping') {
+            $from->send('pong');
             return;
         }
 
-        $sender_id    = (int)$data['sender_id'];
-        $receiver_id  = (int)$data['receiver_id'];
+        $pdo = $this->getPdo();
+        if (!$pdo) return;
+
+        $data = json_decode($msg, true);
+        if (!isset($data['sender_id'], $data['receiver_id'], $data['message'])) return;
+
+        $sender_id = (int)$data['sender_id'];
+        $receiver_id = (int)$data['receiver_id'];
         $message_text = trim($data['message']);
 
         try {
             $stmt = $pdo->prepare("INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)");
             $stmt->execute([$sender_id, $receiver_id, $message_text]);
-            echo "✅ Сообщение сохранено в БД (от $sender_id → $receiver_id)\n";
+            echo "✅ Сообщение сохранено (от $sender_id → $receiver_id) в " . date('H:i') . "\n";
         } catch (Exception $e) {
-            echo "❌ Ошибка записи в БД: " . $e->getMessage() . "\n";
+            echo "❌ Ошибка БД: " . $e->getMessage() . "\n";
         }
 
-        // Рассылаем всем
         $payload = json_encode([
             'sender_id'   => $sender_id,
             'receiver_id' => $receiver_id,
             'message'     => $message_text,
-            'time'        => date('H:i')
+            'time'        => date('H:i'),
+            'date'        => date('Y-m-d'),
+            'full_date'   => date('d.m.Y')
         ]);
 
         foreach ($this->clients as $client) {
@@ -80,12 +93,13 @@ class Chat implements MessageComponentInterface {
         echo "Ошибка: {$e->getMessage()}\n";
         $conn->close();
     }
-}
+};
 
 $server = IoServer::factory(
     new HttpServer(new WsServer(new Chat())),
     9002
 );
 
-echo "🚀 WebSocket сервер запущен и готов к работе на порту 9002!\n";
+echo "🚀 WebSocket сервер запущен с правильным часовым поясом на порту 9002!\n";
+
 $server->run();
